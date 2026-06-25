@@ -3,10 +3,12 @@ import z from 'zod';
 import { usersTable } from './schema';
 
 export const insertUserSchema = createInsertSchema(usersTable, {
+  createdAt: (schema) => schema.int().positive(),
   username: (schema) => schema.min(1).max(16),
 })
   .omit({
     id: true,
+    createdAt: true,
     passwordHash: true,
   })
   .extend({

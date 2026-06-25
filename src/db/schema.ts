@@ -1,8 +1,10 @@
 import { InferInsertModel } from 'drizzle-orm';
-import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const usersTable = sqliteTable('users', {
-  id: int().primaryKey({ autoIncrement: true }),
+  id: integer().primaryKey({ autoIncrement: true }),
+  createdAt: integer().notNull(),
+  role: text({ enum: ['default', 'administrator'] }).notNull(),
   username: text().unique().notNull(),
   passwordHash: text().notNull(),
 });

@@ -9,6 +9,7 @@ import { hashPassword } from '@/utils/password';
 export const createUserAction = async (formData: FormData) => {
   const result = insertUserSchema.safeParse({
     username: formData.get('username'),
+    role: formData.get('role'),
     password: formData.get('password'),
   });
 
@@ -19,6 +20,8 @@ export const createUserAction = async (formData: FormData) => {
   const { data } = result;
 
   await insertUserQuery({
+    createdAt: Date.now(),
+    role: data.role,
     username: data.username,
     passwordHash: await hashPassword(data.password),
   });
