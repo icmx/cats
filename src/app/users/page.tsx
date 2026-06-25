@@ -1,20 +1,36 @@
 import Form from 'next/form';
-import { db } from '@/db/client';
-import { usersTable } from '@/db/schema';
+import { selectUsersQuery } from '@/db/queries';
 import { createUserAction } from './actions';
+import Link from 'next/link';
 
 export default async function Page() {
-  const users = await db.select().from(usersTable);
+  const users = await selectUsersQuery();
 
   return (
     <>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            <code>{user.username}</code>
-          </li>
-        ))}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => {
+            return (
+              <tr key={user.id}>
+                <td>#{user.id}</td>
+                <td>
+                  <Link href={`/users/${user.id}`}>
+                    {user.username}
+                  </Link>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <hr />
       <Form action={createUserAction}>
         <div>
           <label htmlFor="field-username">Username</label>
