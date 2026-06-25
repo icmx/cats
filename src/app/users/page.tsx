@@ -1,6 +1,7 @@
-import { db } from '@/db';
+import Form from 'next/form'
+import { db } from '@/db/client';
 import { usersTable } from '@/db/schema';
-import { createUser } from './actions';
+import { createUserAction } from './actions';
 
 export default async function Page() {
   const users = await db.select().from(usersTable);
@@ -14,10 +15,10 @@ export default async function Page() {
           </li>
         ))}
       </ul>
-      <form action={createUser}>
+      <Form action={createUserAction}>
         <input type="text" name="username" />
         <button type="submit">Create</button>
-      </form>
+      </Form>
     </>
   );
 }

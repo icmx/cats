@@ -2,19 +2,20 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { db } from '@/db';
-import { usersTable } from '@/db/schema';
+import { insertUserQuery } from '@/db/queries';
+import { insertUserSchema } from '@/db/validation';
 
-export async function createUser(formData: FormData): Promise<void> {
-  const username = formData.get('username') as string;
+export const createUserAction = async (formData: FormData) => {
+  const result = insertUserSchema.safeParse({
+    username: formData.get('username'),
+  });
 
-  // @todo: maybe redirect by id to users page
-  // @todo: validate here
-  const [user] = await db
-    .insert(usersTable)
-    .values({ username })
-    .returning();
+  if (!result.success) {
+    throw new Error('Invalid input');
+  }
+
+  await insertUserQuery(result.data);
 
   revalidatePath('/users');
   redirect('/users');
-}
+};
