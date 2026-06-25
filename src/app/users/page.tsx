@@ -1,4 +1,4 @@
-import Form from 'next/form'
+import Form from 'next/form';
 import { db } from '@/db/client';
 import { usersTable } from '@/db/schema';
 import { createUserAction } from './actions';
@@ -16,7 +16,14 @@ export default async function Page() {
         ))}
       </ul>
       <Form action={createUserAction}>
-        <input type="text" name="username" />
+        <div>
+          <label htmlFor="field-username">Username</label>
+          <input id="field-username" type="text" name="username" />
+        </div>
+        <div>
+          <label htmlFor="field-password">Password</label>
+          <input id="field-password" type="password" name="password" />
+        </div>
         <button type="submit">Create</button>
       </Form>
     </>
