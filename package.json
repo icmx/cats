@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",
+    "@mantine/core": "^9.4.0",
+    "@mantine/hooks": "^9.4.0",
     "@node-rs/argon2": "^2.0.2",
+    "@phosphor-icons/react": "^2.1.10",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "drizzle-zod": "^0.8.3",
@@ -27,6 +30,9 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "postcss": "^8.5.15",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
     "typescript": "^5"
   }
 }

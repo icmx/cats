@@ -1,58 +1,64 @@
-import Form from 'next/form';
-import Link from 'next/link';
+import {
+  ActionIcon,
+  Anchor,
+  Badge,
+  Group,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Title,
+} from '@mantine/core';
+import { PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import { selectUsersQuery } from '@/db/queries';
-import { createUserAction } from './actions';
+import { Time } from '@/shared/components/time';
 
 export default async function Page() {
   const users = await selectUsersQuery();
 
   return (
     <>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Created at</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Title order={1} mb="lg">
+        <Group justify="space-between">
+          <span>Users</span>
+          <ActionIcon component={'a'} href={`/users/new`}>
+            <PlusIcon size={16} />
+          </ActionIcon>
+        </Group>
+      </Title>
+
+      <Table>
+        <TableThead>
+          <TableTr>
+            <TableTh>ID</TableTh>
+            <TableTh>Username</TableTh>
+            <TableTh>Created</TableTh>
+            <TableTh>Role</TableTh>
+          </TableTr>
+        </TableThead>
+        <TableTbody>
           {users.map((user) => {
             return (
-              <tr key={user.id}>
-                <td>#{user.id}</td>
-                <td>
-                  <Link href={`/users/${user.id}`}>
-                    {user.username}
-                  </Link>
-                </td>
-                <td>{new Date(user.createdAt).toISOString()}</td>
-                <td>{user.role}</td>
-              </tr>
+              <TableTr key={user.id}>
+                <TableTd>
+                  <Anchor component={'a'} href={`/users/${user.id}`}>
+                    #{user.id}
+                  </Anchor>
+                </TableTd>
+                <TableTd>{user.username}</TableTd>
+                <TableTd>
+                  <Time dateTime={user.createdAt} />
+                </TableTd>
+                <TableTd>
+                  <Badge>{user.role}</Badge>
+                </TableTd>
+              </TableTr>
             );
           })}
-        </tbody>
-      </table>
-      <hr />
-      <Form action={createUserAction}>
-        <div>
-          <label htmlFor="field-username">Username</label>
-          <input id="field-username" type="text" name="username" />
-        </div>
-        <div>
-          <label htmlFor="field-password">Password</label>
-          <input id="field-password" type="password" name="password" />
-        </div>
-        <div>
-          <label htmlFor="field-role">Role</label>
-          <select id="field-select" name="role" defaultValue="default">
-            <option value="administrator">Administrator</option>
-            <option value="default">Default</option>
-          </select>
-        </div>
-        <button type="submit">Create</button>
-      </Form>
+        </TableTbody>
+      </Table>
     </>
   );
 }

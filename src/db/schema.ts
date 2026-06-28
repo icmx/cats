@@ -1,4 +1,3 @@
-import { InferInsertModel } from 'drizzle-orm';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const usersTable = sqliteTable('users', {
@@ -9,4 +8,14 @@ export const usersTable = sqliteTable('users', {
   passwordHash: text().notNull(),
 });
 
-export type InsertUserModel = InferInsertModel<typeof usersTable>;
+export type InsertUserModel = typeof usersTable.$inferInsert;
+
+export type UpdateUserModel = Omit<
+  Partial<typeof usersTable.$inferInsert>,
+  'id'
+>;
+
+export type UserModel = Omit<
+  typeof usersTable.$inferSelect,
+  'passwordHash'
+>;

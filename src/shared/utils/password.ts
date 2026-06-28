@@ -7,21 +7,21 @@ export const HASH_OPTIONS: Options = {
   parallelism: 1,
 };
 
-export const hashPassword = async (text: string): Promise<string> => {
+export async function hashPassword(text: string): Promise<string> {
   try {
     return await hash(text, HASH_OPTIONS);
   } catch {
     throw new Error('Failed to hash password');
   }
-};
+}
 
-export const verifyPassword = async (
+export async function verifyPassword(
   hash: string,
   text: string
-): Promise<boolean> => {
+): Promise<boolean> {
   try {
     return await verify(hash, text);
   } catch {
     throw new Error('Failed to verify password');
   }
-};
+}

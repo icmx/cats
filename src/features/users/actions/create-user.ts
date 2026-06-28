@@ -2,12 +2,16 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { deleteUserQuery, insertUserQuery } from '@/db/queries';
-import { insertUserSchema } from '@/db/validation';
-import { hashPassword } from '@/utils/password';
+import { UserModel } from '@/db/schema';
+import { insertUserQuery } from '@/db/queries';
+import { hashPassword } from '@/shared/utils/password';
+import { createUserSchema } from '../schemas/user-schema';
 
-export const createUserAction = async (formData: FormData) => {
-  const result = insertUserSchema.safeParse({
+export async function createUser(
+  prevState: UserModel | null,
+  formData: FormData
+): Promise<UserModel | null> {
+  const result = createUserSchema.safeParse({
     username: formData.get('username'),
     role: formData.get('role'),
     password: formData.get('password'),
@@ -28,13 +32,4 @@ export const createUserAction = async (formData: FormData) => {
 
   revalidatePath('/users');
   redirect('/users');
-};
-
-export const deleteUserAction = async (formData: FormData) => {
-  const id = +(formData.get('id') || 0);
-
-  await deleteUserQuery(id);
-
-  revalidatePath('/users');
-  redirect('/users');
-};
+}
