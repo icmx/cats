@@ -2,33 +2,43 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { UserModel } from '@/db/schema';
 import { insertUserQuery } from '@/db/queries';
+import { ActionResult } from '@/shared/types/action-result';
 import { hashPassword } from '@/shared/utils/password';
-import { createUserSchema } from '../schemas/user-schema';
+import { extractErrors } from '@/shared/utils/schema';
+import {
+  CreateUserInput,
+  createUserSchema,
+} from '../schemas/user-schema';
 
 export async function createUser(
-  prevState: UserModel | null,
-  formData: FormData
-): Promise<UserModel | null> {
-  const result = createUserSchema.safeParse({
-    username: formData.get('username'),
-    role: formData.get('role'),
-    password: formData.get('password'),
-  });
+  input: CreateUserInput
+): Promise<ActionResult<CreateUserInput>> {
+  const result = createUserSchema.safeParse(input);
 
   if (!result.success) {
-    throw new Error('Invalid input');
+    return {
+      status: 'error',
+      errors: extractErrors(result.error),
+      message: 'Invalid input',
+    };
   }
 
   const { data } = result;
 
-  await insertUserQuery({
-    createdAt: Date.now(),
-    role: data.role,
-    username: data.username,
-    passwordHash: await hashPassword(data.password),
-  });
+  try {
+    await insertUserQuery({
+      createdAt: Date.now(),
+      role: data.role,
+      username: data.username,
+      passwordHash: await hashPassword(data.password),
+    });
+  } catch {
+    return {
+      status: 'error',
+      message: 'Failed to create user',
+    };
+  }
 
   revalidatePath('/users');
   redirect('/users');

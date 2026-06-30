@@ -1,10 +1,9 @@
-import { createUser } from '@/features/users/actions/create-user';
-import { UserForm } from '@/features/users/components/user-form';
+import { UserCreateForm } from '@/features/users/components/user-create-form';
 
 export default async function CreateUserPage() {
   return (
     <>
-      <UserForm initialValues={null} action={createUser} />
+      <UserCreateForm />
     </>
   );
 }

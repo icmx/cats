@@ -1,14 +1,13 @@
 import { notFound } from 'next/navigation';
 import { Button, Divider, Group, Title } from '@mantine/core';
 import z from 'zod';
-import { updateUser } from '@/features/users/actions/update-user';
 import { deleteUser } from '@/features/users/actions/delete-user';
-import { UserForm } from '@/features/users/components/user-form';
+import { UserUpdateForm } from '@/features/users/components/user-update-form';
 import { getUser } from '@/features/users/queries/get-user';
 import { parse } from '@/shared/utils/schema';
 
 const paramsSchema = z.object({
-  id: z.coerce.number().int().min(1),
+  id: z.coerce.number<number>().int().min(1),
 });
 
 export default async function UpdateUserPage({
@@ -31,7 +30,7 @@ export default async function UpdateUserPage({
 
   return (
     <>
-      <UserForm initialValues={user} action={updateUser} />
+      <UserUpdateForm defaultValues={user} />
 
       <Divider my="md" />
 
