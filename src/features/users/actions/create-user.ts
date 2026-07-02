@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { insertUserQuery } from '@/db/queries';
+import { userQueries } from '@/db/queries';
 import { ActionResult } from '@/shared/types/action-result';
 import { hashPassword } from '@/shared/utils/password';
 import { extractErrors } from '@/shared/utils/schema';
@@ -10,6 +10,7 @@ import {
   CreateUserInput,
   createUserSchema,
 } from '../schemas/user-schema';
+import { createUuid } from '@/shared/utils/auth';
 
 export async function createUser(
   input: CreateUserInput
@@ -27,7 +28,8 @@ export async function createUser(
   const { data } = result;
 
   try {
-    await insertUserQuery({
+    await userQueries.insert({
+      id: createUuid(),
       createdAt: Date.now(),
       role: data.role,
       username: data.username,

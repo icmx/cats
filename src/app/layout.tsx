@@ -5,6 +5,7 @@ import {
   MantineProvider,
 } from '@mantine/core';
 import { Shell } from '@/shared/components/shell';
+import { getCurrentUser } from '@/shared/utils/auth';
 
 import '@mantine/core/styles.css';
 import './globals.css';
@@ -13,11 +14,13 @@ export const metadata: Metadata = {
   title: 'CATS (test)',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getCurrentUser();
+
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -25,7 +28,7 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider defaultColorScheme="dark">
-          <Shell>{children}</Shell>
+          <Shell user={user}>{children}</Shell>
         </MantineProvider>
       </body>
     </html>

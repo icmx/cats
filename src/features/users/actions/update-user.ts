@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { updateUserByIdQuery } from '@/db/queries';
+import { userQueries } from '@/db/queries';
 import { ActionResult } from '@/shared/types/action-result';
 import { extractErrors } from '@/shared/utils/schema';
 import {
@@ -26,7 +26,7 @@ export async function updateUser(
   const { data } = result;
 
   try {
-    await updateUserByIdQuery(data.id, {
+    await userQueries.updateById(data.id, {
       username: data.username,
       role: data.role,
     });

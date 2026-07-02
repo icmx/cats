@@ -2,6 +2,7 @@ import {
   ActionIcon,
   Anchor,
   Badge,
+  Code,
   Group,
   Table,
   TableTbody,
@@ -12,11 +13,11 @@ import {
   Title,
 } from '@mantine/core';
 import { PlusIcon } from '@phosphor-icons/react/dist/ssr';
-import { selectUsersQuery } from '@/db/queries';
 import { Time } from '@/shared/components/time';
+import { userQueries } from '@/db/queries';
 
 export default async function Page() {
-  const users = await selectUsersQuery();
+  const users = await userQueries.select();
 
   return (
     <>
@@ -44,7 +45,7 @@ export default async function Page() {
               <TableTr key={user.id}>
                 <TableTd>
                   <Anchor component={'a'} href={`/users/${user.id}`}>
-                    #{user.id}
+                    <Code>{user.id}</Code>
                   </Anchor>
                 </TableTd>
                 <TableTd>{user.username}</TableTd>

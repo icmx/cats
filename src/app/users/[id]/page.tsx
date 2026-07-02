@@ -1,13 +1,13 @@
 import { notFound } from 'next/navigation';
 import { Button, Divider, Group, Title } from '@mantine/core';
 import z from 'zod';
+import { userQueries } from '@/db/queries';
 import { deleteUser } from '@/features/users/actions/delete-user';
 import { UserUpdateForm } from '@/features/users/components/user-update-form';
-import { getUser } from '@/features/users/queries/get-user';
 import { parse } from '@/shared/utils/schema';
 
 const paramsSchema = z.object({
-  id: z.coerce.number<number>().int().min(1),
+  id: z.string().min(1),
 });
 
 export default async function UpdateUserPage({
@@ -16,7 +16,7 @@ export default async function UpdateUserPage({
   params: Promise<unknown>;
 }) {
   const { id } = await parse(params, paramsSchema);
-  const user = await getUser(id);
+  const user = await userQueries.selectById(id);
 
   if (!user) {
     notFound();

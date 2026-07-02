@@ -1,61 +1,112 @@
-'use server';
-
 import { eq } from 'drizzle-orm';
 import { db } from './client';
 import {
-  InsertUserModel,
-  UpdateUserModel,
+  SessionInsertModel,
+  SessionModel,
+  sessionsTable,
+  UserSelectModel,
+  UserInsertModel,
   UserModel,
   usersTable,
+  UserUpdateModel,
 } from './schema';
 
-export const insertUserQuery = async (
-  value: InsertUserModel
-): Promise<number> => {
-  const results = await db.insert(usersTable).values(value).returning();
-  const id = results.at(0)?.id ?? 0;
+export const userQueries = {
+  async insert(model: UserInsertModel): Promise<UserModel> {
+    const results = await db
+      .insert(usersTable)
+      .values(model)
+      .returning({
+        id: usersTable.id,
+        createdAt: usersTable.createdAt,
+        role: usersTable.role,
+        username: usersTable.username,
+      });
 
-  return id;
+    return results[0];
+  },
+
+  async select(): Promise<UserModel[]> {
+    const results = await db
+      .select({
+        id: usersTable.id,
+        createdAt: usersTable.createdAt,
+        role: usersTable.role,
+        username: usersTable.username,
+      })
+      .from(usersTable);
+
+    return results;
+  },
+
+  async selectById(id: string): Promise<UserModel | undefined> {
+    const results = await db
+      .select({
+        id: usersTable.id,
+        createdAt: usersTable.createdAt,
+        role: usersTable.role,
+        username: usersTable.username,
+      })
+      .from(usersTable)
+      .where(eq(usersTable.id, id));
+
+    return results[0] ?? undefined;
+  },
+
+  async UNSAFE_selectFullRowByUsername(
+    username: string
+  ): Promise<UserSelectModel | undefined> {
+    const results = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.username, username));
+
+    return results.at(0) ?? undefined;
+  },
+
+  async updateById(
+    id: string,
+    model: UserUpdateModel
+  ): Promise<UserModel> {
+    const results = await db
+      .update(usersTable)
+      .set(model)
+      .where(eq(usersTable.id, id))
+      .returning({
+        id: usersTable.id,
+        createdAt: usersTable.createdAt,
+        role: usersTable.role,
+        username: usersTable.username,
+      });
+
+    return results[0];
+  },
+
+  async deleteById(id: string): Promise<void> {
+    await db.delete(usersTable).where(eq(usersTable.id, id));
+  },
 };
 
-export const updateUserByIdQuery = async (
-  id: number,
-  value: UpdateUserModel
-): Promise<void> => {
-  await db.update(usersTable).set(value).where(eq(usersTable.id, id));
-};
+export const sessionQueries = {
+  async insert(model: SessionInsertModel): Promise<SessionModel> {
+    const results = await db
+      .insert(sessionsTable)
+      .values(model)
+      .returning();
 
-export const deleteUserByIdQuery = async (
-  id: number
-): Promise<void> => {
-  await db.delete(usersTable).where(eq(usersTable.id, id));
-};
+    return results[0];
+  },
 
-export const selectUsersQuery = async (): Promise<UserModel[]> => {
-  const results = await db
-    .select({
-      id: usersTable.id,
-      createdAt: usersTable.createdAt,
-      role: usersTable.role,
-      username: usersTable.username,
-    })
-    .from(usersTable);
+  async selectById(id: string): Promise<SessionModel | undefined> {
+    const results = await db
+      .select()
+      .from(sessionsTable)
+      .where(eq(sessionsTable.id, id));
 
-  return results;
-};
+    return results[0] ?? undefined;
+  },
 
-export const selectUserByIdQuery = async (
-  id: number
-): Promise<UserModel | undefined> => {
-  const results = await db
-    .select({
-      id: usersTable.id,
-      createdAt: usersTable.createdAt,
-      role: usersTable.role,
-      username: usersTable.username,
-    })
-    .from(usersTable)
-    .where(eq(usersTable.id, id));
-
-  return results.at(0) ?? undefined;
+  async deleteById(id: string): Promise<void> {
+    await db.delete(sessionsTable).where(eq(sessionsTable.id, id));
+  },
 };
